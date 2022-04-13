@@ -1,0 +1,68 @@
+package nl.faanveldhuijsen.roosters.controller;
+
+import nl.faanveldhuijsen.roosters.dto.TaskData;
+import nl.faanveldhuijsen.roosters.dto.UserData;
+import nl.faanveldhuijsen.roosters.model.Task;
+import nl.faanveldhuijsen.roosters.repository.ITaskRepository;
+import nl.faanveldhuijsen.roosters.service.ICrudService;
+import nl.faanveldhuijsen.roosters.service.TaskService;
+import nl.faanveldhuijsen.roosters.utils.DefaultResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+
+@RestController
+public class TaskController {
+
+    private final DefaultResponse response;
+    private final TaskService tasks;
+
+    public TaskController(TaskService tasks, DefaultResponse response) {
+        this.tasks = tasks;
+        this.response = response;
+    }
+
+    @GetMapping("/tasks")
+    public ResponseEntity<Object> getTasks() {
+        return response.ok(tasks.fetch());
+    }
+
+    @PostMapping("/tasks")
+    public ResponseEntity<Object> createTask(@Valid @RequestBody TaskData task, BindingResult result) {
+        if (result.hasErrors()) {
+            return response.fieldErrors(result);
+        }
+        return response.created(tasks.create(task));
+    }
+
+    @GetMapping("/tasks/{id}")
+    public ResponseEntity<Object> showTask(@PathVariable("id") Long id) {
+        TaskData task = this.tasks.get(id);
+
+        return response.ok(task);
+    }
+
+    @PostMapping("/tasks/{id}")
+    public ResponseEntity<Object> updateTask(@PathVariable("id") Long id, @Valid @RequestBody TaskData updatedTask, BindingResult result) {
+        if (result.hasErrors()) {
+            return response.fieldErrors(result);
+        }
+        TaskData task = this.tasks.update(id, updatedTask);
+
+        return response.ok(task);
+    }
+
+    @DeleteMapping("/tasks/{id}")
+    public ResponseEntity<Object> deleteTask(@PathVariable("id") Long id) {
+        TaskData task = this.tasks.delete(id);
+
+        if (task == null) {
+            return response.notFound("Task not found");
+        }
+
+        return response.ok(task);
+    }
+}
