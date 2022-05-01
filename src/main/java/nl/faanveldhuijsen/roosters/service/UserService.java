@@ -114,6 +114,18 @@ public class UserService implements ICrudService<UserData, UserDataSlim> {
         return null;
     }
 
+    public UserData getAuthenticatedUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) auth.getPrincipal();
+            UserData user = get(userDetails.getUsername());
+                return user;
+        }
+        notFound();
+        return null;
+    }
+
     public boolean isAdmin(Authentication auth) {
         for (GrantedAuthority role : auth.getAuthorities()) {
             if (role.getAuthority().equals("ADMIN")) {
@@ -121,5 +133,10 @@ public class UserService implements ICrudService<UserData, UserDataSlim> {
             }
         }
         return false;
+    }
+
+    public boolean isAdmin() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return isAdmin(auth);
     }
 }

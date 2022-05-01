@@ -26,4 +26,6 @@ public class UserData {
 
     protected List<ScheduleDataSlim> schedules;
 
+    protected List<DayOffDataSlim> daysOff;
+
 }

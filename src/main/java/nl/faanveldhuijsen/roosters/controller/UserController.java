@@ -55,14 +55,7 @@ public class UserController {
 
     @GetMapping("/users/me")
     public ResponseEntity<Object> me() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        if (auth.getPrincipal() instanceof UserDetails) {
-            UserDetails ud = (UserDetails) auth.getPrincipal();
-            UserData me = this.user.get(ud.getUsername());
-            return ResponseEntity.ok(me);
-        }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(user.getAuthenticatedUser());
     }
 
     @PostMapping("/users/me")

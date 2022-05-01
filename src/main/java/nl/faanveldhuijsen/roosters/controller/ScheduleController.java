@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import nl.faanveldhuijsen.roosters.dto.ScheduleData;
 import nl.faanveldhuijsen.roosters.dto.TaskData;
 import nl.faanveldhuijsen.roosters.dto.mapper.IScheduleMapper;
+import nl.faanveldhuijsen.roosters.service.DateTimeService;
 import nl.faanveldhuijsen.roosters.service.ScheduleService;
 import nl.faanveldhuijsen.roosters.utils.DefaultResponse;
 import org.apache.coyote.Response;
@@ -28,6 +29,8 @@ public class ScheduleController {
     public final DefaultResponse response;
 
     public final IScheduleMapper mapper;
+
+    public final DateTimeService dateTimeService;
 
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -63,16 +66,16 @@ public class ScheduleController {
     @GetMapping("/schedules/year/{year}/week/{week}")
     public ResponseEntity<Object> showWeek(@PathVariable("year") int year, @PathVariable("week") int week) {
 
-        // Get first day of the week
-        LocalDateTime startDate = LocalDateTime.of(year, Month.JUNE, 1, 0, 0, 0)
-                .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-                .with(IsoFields.WEEK_OF_WEEK_BASED_YEAR, week);
+        DateTimeService.DateRange dateRange = dateTimeService.rangeFromWeek(year, week);
 
-        // Add 7 days to go to the start of next monday,
-        // minus 1 nano second makes it exactly the end of the week
-        LocalDateTime endDate = startDate.plusDays(7).minusNanos(1);
+        return response.ok(schedule.inBetweenDates(dateRange.startDate, dateRange.endDate));
+    }
 
-        return response.ok(schedule.inBetweenDates(startDate, endDate));
+    @GetMapping("/schedules/{year}/{month}/{day}")
+    public ResponseEntity<Object> showDay(@PathVariable("year") int year, @PathVariable("month") int month, @PathVariable("day") int day) {
+
+        DateTimeService.DateRange dateRange = dateTimeService.rangeFromDay(year, month, day);
+        return response.ok(schedule.inBetweenDates(dateRange.startDate, dateRange.endDate));
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")

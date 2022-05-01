@@ -2,13 +2,8 @@ package nl.faanveldhuijsen.roosters.controller;
 
 import nl.faanveldhuijsen.roosters.dto.TaskData;
 import nl.faanveldhuijsen.roosters.dto.TaskDataSlim;
-import nl.faanveldhuijsen.roosters.dto.UserData;
-import nl.faanveldhuijsen.roosters.model.Task;
-import nl.faanveldhuijsen.roosters.repository.ITaskRepository;
-import nl.faanveldhuijsen.roosters.service.ICrudService;
 import nl.faanveldhuijsen.roosters.service.TaskService;
 import nl.faanveldhuijsen.roosters.utils.DefaultResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
