@@ -28,13 +28,13 @@ public class TaskService implements ICrudService<TaskData, TaskDataSlim> {
     }
 
     @Override
-    public TaskData update(Long id, TaskData data) {
+    public TaskDataSlim update(Long id, TaskData data) {
         Task task = repo.findById(id).orElse(null);
 
         if (task != null) {
             task.setName(data.getName());
 
-            return mapper.entityToData(repo.save(task));
+            return mapper.entityToDataSlim(repo.save(task));
         }
 
         notFound();

@@ -5,22 +5,24 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+
 @RestController
 public class MainController {
 
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/")
     public String index() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         if (auth.getPrincipal() instanceof UserDetails) {
             UserDetails ud = (UserDetails) auth.getPrincipal();
-            return "Hello " + ud.getUsername() + "!";
+            return "Hello " + ud.getUsername() + "! " + auth.getAuthorities().toString();
         }
         else {
             return "Hello stranger!";
@@ -36,7 +38,7 @@ public class MainController {
      *
      * @return TeapotResponse
      */
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/teapot")
     public ResponseEntity<String> imATeapot() {
         return new ResponseEntity<>("I'm a teapot!", HttpStatus.I_AM_A_TEAPOT);

@@ -1,22 +1,26 @@
 package nl.faanveldhuijsen.roosters.controller;
 
 import nl.faanveldhuijsen.roosters.dto.ScheduleData;
-import nl.faanveldhuijsen.roosters.dto.TaskData;
+import nl.faanveldhuijsen.roosters.dto.UpdateUserData;
 import nl.faanveldhuijsen.roosters.dto.UserData;
+import nl.faanveldhuijsen.roosters.dto.UserDataSlim;
 import nl.faanveldhuijsen.roosters.dto.mapper.IUserMapper;
-import nl.faanveldhuijsen.roosters.model.Schedule;
+import nl.faanveldhuijsen.roosters.model.User;
+import nl.faanveldhuijsen.roosters.service.ScheduleService;
 import nl.faanveldhuijsen.roosters.service.UserService;
 import nl.faanveldhuijsen.roosters.utils.DefaultResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 @RestController
 public class UserController {
@@ -28,13 +32,18 @@ public class UserController {
     private UserService user;
 
     @Autowired
+    private ScheduleService schedule;
+
+    @Autowired
     private IUserMapper mapper;
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/users")
     public ResponseEntity<Object> getUsers() {
         return new ResponseEntity<>(user.fetch(), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/users")
     public ResponseEntity<Object> createUser(@Valid @RequestBody UserData user, BindingResult result) {
         if (result.hasErrors()) {
@@ -44,13 +53,45 @@ public class UserController {
         return this.response.created(newUser);
     }
 
+    @GetMapping("/users/me")
+    public ResponseEntity<Object> me() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth.getPrincipal() instanceof UserDetails) {
+            UserDetails ud = (UserDetails) auth.getPrincipal();
+            UserData me = this.user.get(ud.getUsername());
+            return ResponseEntity.ok(me);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/users/me")
+    public ResponseEntity<Object> updateMe(@Valid @RequestBody UpdateUserData updatedUser, BindingResult result) {
+        if (result.hasErrors()) {
+            return response.fieldErrors(result);
+        }
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth.getPrincipal() instanceof UserDetails) {
+            UserDetails ud = (UserDetails) auth.getPrincipal();
+            UserData me = this.user.get(ud.getUsername());
+
+            // values parsed from request body
+            me.setEmail(updatedUser.getEmail());
+            me.setName(updatedUser.getName());
+            me.setPassword(updatedUser.getPassword());
+
+            // Update and return user
+            UserDataSlim user = this.user.update(me.getId(), me);
+            return ResponseEntity.ok(user);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/users/{id}")
     public ResponseEntity<Object> showUser(@PathVariable("id") Long id) {
         UserData user = this.user.get(id);
-
-        if (user == null) {
-            return response.notFound("User not found");
-        }
 
         return ResponseEntity.ok(user);
     }
@@ -59,26 +100,34 @@ public class UserController {
     public ResponseEntity<Object> deleteTask(@PathVariable("id") Long id) {
         UserData task = this.user.delete(id);
 
-        if (task == null) {
-            return response.notFound("User not found");
-        }
-
         return response.ok(task);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/users/{id}")
     public ResponseEntity<Object> updateUser(@PathVariable("id") Long id, @Valid @RequestBody UserData updatedUser, BindingResult result) {
         if (result.hasErrors()) {
             return response.fieldErrors(result);
         }
-        UserData user = this.user.update(id, updatedUser);
+        UserDataSlim user = this.user.update(id, updatedUser);
 
         return response.ok(user);
     }
 
+    /**
+     * Find schedules of selected user. Throws notFound error when the authenticated
+     * user is not of role admin and tries to fetch someone else's schedules
+     * @param userId
+     * @throws nl.faanveldhuijsen.roosters.utils.exceptions.ResourceNotFound
+     * @return List of schedules from user
+     */
     @GetMapping("/users/{id}/schedules")
     public ResponseEntity<Object> getUserSchedules(@PathVariable("id") Long userId) {
-        List<Schedule> schedules = mapper.dataToEntity(this.user.get(userId)).getSchedules();
+
+        UserData data = this.user.getAuthenticatedUser(userId);
+        User user = mapper.dataToEntity(data);
+
+        Collection<ScheduleData> schedules = schedule.getSchedulesFromUser(user);
 
         return response.ok(schedules);
     }

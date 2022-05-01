@@ -8,6 +8,7 @@ import nl.faanveldhuijsen.roosters.service.ScheduleService;
 import nl.faanveldhuijsen.roosters.utils.DefaultResponse;
 import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,11 +30,13 @@ public class ScheduleController {
     public final IScheduleMapper mapper;
 
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/schedules")
     public ResponseEntity<Object> showSchedules() {
         return response.ok(schedule.fetch());
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/schedules")
     public ResponseEntity<Object> createSchedule(@RequestBody @Valid ScheduleData scheduleData, BindingResult result) {
         if (result.hasErrors()) {
@@ -48,6 +51,7 @@ public class ScheduleController {
         return response.ok(schedule.get(id));
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/schedules/{id}")
     public ResponseEntity<Object> updateSchedule(@PathVariable("id") Long id, @Valid @RequestBody ScheduleData data, BindingResult result) {
         if (result.hasErrors()) {
@@ -71,6 +75,7 @@ public class ScheduleController {
         return response.ok(schedule.inBetweenDates(startDate, endDate));
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/schedules/{id}/delete")
     public ResponseEntity<Object> deleteSchedule(@PathVariable("id") Long id) {
         ScheduleData task = this.schedule.delete(id);

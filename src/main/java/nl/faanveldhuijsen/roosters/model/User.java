@@ -1,6 +1,9 @@
 package nl.faanveldhuijsen.roosters.model;
 
 import lombok.Data;
+import nl.faanveldhuijsen.roosters.repository.IScheduleRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;

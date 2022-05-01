@@ -6,6 +6,7 @@ import nl.faanveldhuijsen.roosters.dto.mapper.IScheduleMapper;
 import nl.faanveldhuijsen.roosters.dto.mapper.ITaskMapper;
 import nl.faanveldhuijsen.roosters.dto.mapper.IUserMapper;
 import nl.faanveldhuijsen.roosters.model.Schedule;
+import nl.faanveldhuijsen.roosters.model.User;
 import nl.faanveldhuijsen.roosters.repository.IScheduleRepository;
 import nl.faanveldhuijsen.roosters.repository.ITaskRepository;
 import nl.faanveldhuijsen.roosters.repository.IUserRepository;
@@ -107,5 +108,9 @@ public class ScheduleService implements ICrudService<ScheduleData, ScheduleData>
         schedule.setTask(taskRepo.findById(taskId).orElse(schedule.getTask()));
         Long userId = schedule.getUser().getId();
         schedule.setUser(userRepo.findById(userId).orElse(schedule.getUser()));
+    }
+
+    public Collection<ScheduleData> getSchedulesFromUser(User user) {
+        return mapper.entityListToDataList(repo.findAllByUser(user));
     }
 }
