@@ -1,6 +1,9 @@
 package nl.faanveldhuijsen.roosters.model;
 
 import lombok.Data;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.util.List;
@@ -21,7 +24,17 @@ public class User {
 
     protected String password;
 
+    public String role;
+
     @OneToMany(mappedBy = "user")
     public List<Schedule> schedules;
+
+    public PasswordEncoder encoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    public void setPassword(String password) {
+        this.password = encoder().encode(password);
+    }
 
 }

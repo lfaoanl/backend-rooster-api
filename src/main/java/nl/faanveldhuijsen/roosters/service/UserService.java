@@ -7,6 +7,8 @@ import nl.faanveldhuijsen.roosters.dto.mapper.IUserMapper;
 import nl.faanveldhuijsen.roosters.model.User;
 import nl.faanveldhuijsen.roosters.repository.IUserRepository;
 import nl.faanveldhuijsen.roosters.utils.exceptions.ResourceNotFound;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

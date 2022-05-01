@@ -1,6 +1,8 @@
 package nl.faanveldhuijsen.roosters.dto;
 
 import lombok.Data;
+import nl.faanveldhuijsen.roosters.model.User;
+
 import javax.validation.constraints.Email;
 
 @Data
@@ -12,5 +14,7 @@ public class UserDataSlim {
 
     @Email
     protected String email;
+
+    protected String role;
 
 }
