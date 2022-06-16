@@ -4,10 +4,10 @@ import java.util.Collection;
 
 public interface ICrudService<D, S> {
 
-    D create(D user);
+    S create(D user);
     S update(Long id, D user);
     D get(Long id);
-    D delete(Long id);
+    S delete(Long id);
     Collection<S> fetch();
 
     /**

@@ -79,7 +79,7 @@ public class ScheduleController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping("/schedules/{id}/delete")
+    @DeleteMapping("/schedules/{id}")
     public ResponseEntity<Object> deleteSchedule(@PathVariable("id") Long id) {
         ScheduleData task = this.schedule.delete(id);
 

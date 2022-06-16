@@ -26,9 +26,9 @@ public class UserService implements ICrudService<UserData, UserDataSlim> {
     private final IUserMapper mapper;
 
     @Override
-    public UserData create(UserData data) {
+    public UserDataSlim create(UserData data) {
         User userSave = repo.save(mapper.dataToEntity(data));
-        return mapper.entityToData(userSave);
+        return mapper.entityToDataSlim(userSave);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class UserService implements ICrudService<UserData, UserDataSlim> {
     }
 
     @Override
-    public UserData delete(Long id) {
+    public UserDataSlim delete(Long id) {
         Optional<User> query = repo.findById(id);
 
         if (query.isEmpty()) {
@@ -76,7 +76,7 @@ public class UserService implements ICrudService<UserData, UserDataSlim> {
         }
         repo.deleteById(id);
 
-        return mapper.entityToData(query.get());
+        return mapper.entityToDataSlim(query.get());
     }
 
     @Override

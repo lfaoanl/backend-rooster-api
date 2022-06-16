@@ -1,6 +1,5 @@
 package nl.faanveldhuijsen.roosters.dto.mapper;
 
-import nl.faanveldhuijsen.roosters.dto.ScheduleData;
 import nl.faanveldhuijsen.roosters.dto.TaskData;
 import nl.faanveldhuijsen.roosters.dto.TaskDataSlim;
 import nl.faanveldhuijsen.roosters.model.Task;

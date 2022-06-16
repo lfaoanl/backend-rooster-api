@@ -22,9 +22,9 @@ public class TaskService implements ICrudService<TaskData, TaskDataSlim> {
     private final ITaskMapper mapper;
 
     @Override
-    public TaskData create(TaskData data) {
+    public TaskDataSlim create(TaskData data) {
         Task save = repo.save(mapper.dataToEntity(data));
-        return mapper.entityToData(save);
+        return mapper.entityToDataSlim(save);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class TaskService implements ICrudService<TaskData, TaskDataSlim> {
     }
 
     @Override
-    public TaskData delete(Long id) {
+    public TaskDataSlim delete(Long id) {
         Optional<Task> query = repo.findById(id);
 
         if (query.isEmpty()) {
@@ -61,7 +61,8 @@ public class TaskService implements ICrudService<TaskData, TaskDataSlim> {
         }
         repo.deleteById(id);
 
-        return mapper.entityToData(query.get());
+        TaskDataSlim taskData = mapper.entityToDataSlim(query.get());
+        return taskData;
     }
 
     @Override

@@ -58,7 +58,7 @@ public class TaskController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/tasks/{id}")
     public ResponseEntity<Object> deleteTask(@PathVariable("id") Long id) {
-        TaskData task = this.tasks.delete(id);
+        TaskDataSlim task = this.tasks.delete(id);
 
         if (task == null) {
             return response.notFound("Task not found");

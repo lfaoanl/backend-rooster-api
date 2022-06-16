@@ -49,13 +49,21 @@ public class UserController {
         if (result.hasErrors()) {
             return response.fieldErrors(result);
         }
-        UserData newUser = this.user.create(user);
+        UserDataSlim newUser = this.user.create(user);
         return this.response.created(newUser);
     }
 
     @GetMapping("/users/me")
     public ResponseEntity<Object> me() {
-        return ResponseEntity.ok(user.getAuthenticatedUser());
+        UserData authenticatedUser = user.getAuthenticatedUser();
+
+        UserDataSlim me = new UserDataSlim();
+        me.setId(authenticatedUser.getId());
+        me.setName(authenticatedUser.getName());
+        me.setEmail(authenticatedUser.getEmail());
+        me.setRole(authenticatedUser.getRole());
+
+        return ResponseEntity.ok(me);
     }
 
     @PostMapping("/users/me")
@@ -91,7 +99,7 @@ public class UserController {
 
     @DeleteMapping("/users/{id}")
     public ResponseEntity<Object> deleteTask(@PathVariable("id") Long id) {
-        UserData task = this.user.delete(id);
+        UserDataSlim task = this.user.delete(id);
 
         return response.ok(task);
     }
