@@ -2,21 +2,14 @@ package nl.faanveldhuijsen.roosters.controller;
 
 import lombok.RequiredArgsConstructor;
 import nl.faanveldhuijsen.roosters.dto.DayOffData;
-import nl.faanveldhuijsen.roosters.dto.DayOffDataSlim;
-import nl.faanveldhuijsen.roosters.dto.UserData;
-import nl.faanveldhuijsen.roosters.dto.mapper.IUserMapper;
-import nl.faanveldhuijsen.roosters.model.User;
 import nl.faanveldhuijsen.roosters.service.DateTimeService;
 import nl.faanveldhuijsen.roosters.service.DayOffService;
-import nl.faanveldhuijsen.roosters.service.UserService;
 import nl.faanveldhuijsen.roosters.utils.DefaultResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.websocket.server.PathParam;
 import java.util.Collection;
 
 @RequiredArgsConstructor
@@ -55,7 +48,7 @@ public class DayOffController {
     public ResponseEntity<Object> get(@PathVariable("year") int year, @PathVariable("month") int month, @PathVariable("day") int day) {
 
         DateTimeService.DateRange dateRange = dateTimeService.rangeFromDay(year, month, day);
-        Collection<DayOffData> daysOffList = dayOffService.inBetweenDates(dateRange.startDate, dateRange.endDate);
+        Collection<DayOffData> daysOffList = dayOffService.inBetweenDates(dateRange.start, dateRange.end);
 
         return ResponseEntity.ok(daysOffList);
     }
