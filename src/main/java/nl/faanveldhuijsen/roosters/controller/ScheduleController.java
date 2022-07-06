@@ -2,23 +2,16 @@ package nl.faanveldhuijsen.roosters.controller;
 
 import lombok.RequiredArgsConstructor;
 import nl.faanveldhuijsen.roosters.dto.ScheduleData;
-import nl.faanveldhuijsen.roosters.dto.TaskData;
 import nl.faanveldhuijsen.roosters.dto.mapper.IScheduleMapper;
 import nl.faanveldhuijsen.roosters.service.DateTimeService;
 import nl.faanveldhuijsen.roosters.service.ScheduleService;
 import nl.faanveldhuijsen.roosters.utils.DefaultResponse;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.DayOfWeek;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.time.temporal.IsoFields;
-import java.time.temporal.TemporalAdjusters;
 
 @RequiredArgsConstructor
 @RestController
