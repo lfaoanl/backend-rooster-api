@@ -48,7 +48,7 @@ public class DayOffController {
     public ResponseEntity<Object> get(@PathVariable("year") int year, @PathVariable("month") int month, @PathVariable("day") int day) {
 
         DateTimeService.DateRange dateRange = dateTimeService.rangeFromDay(year, month, day);
-        Collection<DayOffData> daysOffList = dayOffService.inBetweenDates(dateRange.startDate, dateRange.endDate);
+        Collection<DayOffData> daysOffList = dayOffService.inBetweenDates(dateRange.start, dateRange.end);
 
         return ResponseEntity.ok(daysOffList);
     }

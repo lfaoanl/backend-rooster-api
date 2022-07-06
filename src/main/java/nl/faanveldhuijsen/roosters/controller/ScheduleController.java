@@ -61,14 +61,14 @@ public class ScheduleController {
 
         DateTimeService.DateRange dateRange = dateTimeService.rangeFromWeek(year, week);
 
-        return response.ok(schedule.inBetweenDates(dateRange.startDate, dateRange.endDate));
+        return response.ok(schedule.inBetweenDates(dateRange.start, dateRange.end));
     }
 
     @GetMapping("/schedules/{year}/{month}/{day}")
     public ResponseEntity<Object> showDay(@PathVariable("year") int year, @PathVariable("month") int month, @PathVariable("day") int day) {
 
-        DateTimeService.DateRange dateRange = dateTimeService.rangeFromDay(year, month, day);
-        return response.ok(schedule.inBetweenDates(dateRange.startDate, dateRange.endDate));
+        DateRange dateRange = dateTimeService.rangeFromDay(year, month, day);
+        return response.ok(schedule.inBetweenDates(dateRange.start, dateRange.end));
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")

@@ -1,22 +1,23 @@
 package nl.faanveldhuijsen.roosters.service;
 
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.IsoFields;
 import java.time.temporal.TemporalAdjusters;
+import java.util.Date;
 
 @Service
 public class DateTimeService {
 
     @RequiredArgsConstructor
     public static class DateRange {
-        public final LocalDateTime startDate;
-        public final LocalDateTime endDate;
+        public final LocalDateTime start;
+        public final LocalDateTime end;
     }
 
     public DateRange rangeFromWeek(int year, int week) {
