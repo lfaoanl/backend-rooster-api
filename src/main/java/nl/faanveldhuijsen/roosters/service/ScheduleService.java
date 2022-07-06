@@ -2,10 +2,12 @@ package nl.faanveldhuijsen.roosters.service;
 
 import lombok.RequiredArgsConstructor;
 import nl.faanveldhuijsen.roosters.dto.ScheduleData;
+import nl.faanveldhuijsen.roosters.dto.ScheduleDataCsv;
 import nl.faanveldhuijsen.roosters.dto.mapper.IScheduleMapper;
 import nl.faanveldhuijsen.roosters.dto.mapper.ITaskMapper;
 import nl.faanveldhuijsen.roosters.dto.mapper.IUserMapper;
 import nl.faanveldhuijsen.roosters.model.Schedule;
+import nl.faanveldhuijsen.roosters.model.Task;
 import nl.faanveldhuijsen.roosters.model.User;
 import nl.faanveldhuijsen.roosters.repository.IScheduleRepository;
 import nl.faanveldhuijsen.roosters.repository.ITaskRepository;
@@ -15,10 +17,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -112,5 +111,36 @@ public class ScheduleService implements ICrudService<ScheduleData, ScheduleData>
 
     public Collection<ScheduleData> getSchedulesFromUser(User user) {
         return mapper.entityListToDataList(repo.findAllByUser(user));
+    }
+
+    public HashMap<String, List<?>> createFromCsv(List<ScheduleDataCsv> csvData) {
+        List<ScheduleData> success = new ArrayList<>();
+        List<ScheduleDataCsv> failed = new ArrayList<>();
+
+        for (ScheduleDataCsv data : csvData) {
+            ScheduleData scheduleData = new ScheduleData();
+
+            Optional<User> userByEmail = userRepo.findUserByEmail(data.getEmail());
+            Optional<Task> taskByName = taskRepo.findTaskByName(data.getTaskName());
+
+            if (userByEmail.isEmpty() || taskByName.isEmpty()) {
+                failed.add(data);
+                continue;
+            }
+
+            scheduleData.setUser(userMapper.entityToDataSlim(userByEmail.get()));
+            scheduleData.setTask(taskMapper.entityToDataSlim(taskByName.get()));
+            scheduleData.setStartTime(data.getStartTime());
+            scheduleData.setEndTime(data.getEndTime());
+
+            success.add(create(scheduleData));
+        }
+
+        HashMap<String, List<?>> status = new HashMap<>();
+
+        status.put("success", success);
+        status.put("failed", failed);
+
+        return status;
     }
 }

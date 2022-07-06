@@ -41,4 +41,10 @@ public class DateTimeService {
         return new DateRange(startDate, endDate);
     }
 
+    public DateRange rangeFromString(String start, String end) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+        return new DateRange(LocalDateTime.parse(start, formatter), LocalDateTime.parse(end, formatter));
+    }
+
 }
