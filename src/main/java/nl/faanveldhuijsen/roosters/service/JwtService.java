@@ -44,6 +44,11 @@ public class JwtService {
         return createToken(claims, userDetails.getUsername());
     }
 
+    public TokenData generateToken(String username) {
+        Map<String, Object> claims = new HashMap<>();
+        return createToken(claims, username);
+    }
+
     private TokenData createToken(Map<String, Object> claims, String subject) {
         long validPeriod = 1000 * 60 * 60 * 24 * 10; // 10 days in ms
         long currentTime = System.currentTimeMillis();
