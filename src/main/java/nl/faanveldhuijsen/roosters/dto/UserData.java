@@ -19,7 +19,6 @@ public class UserData {
     @Email
     protected String email;
 
-    @JsonIgnore
     protected String password;
 
     @Pattern(regexp = "^(USER|ADMIN)$", message = "must equal USER or ADMIN")
