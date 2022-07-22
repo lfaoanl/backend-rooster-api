@@ -98,7 +98,7 @@ public class UserController {
     }
 
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<Object> deleteTask(@PathVariable("id") Long id) {
+    public ResponseEntity<Object> deleteUser(@PathVariable("id") Long id) {
         UserDataSlim task = this.user.delete(id);
 
         return response.ok(task);
